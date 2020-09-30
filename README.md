@@ -10,7 +10,7 @@ The objective of the system is to:
 
 Here is a screenshot of what the final product could look like using my favorite fish friends from Finding Nemo!
 
-![Image of mimosa in action](https://m-and-c-pics.s3.amazonaws.com/Screen+Shot+2020-09-30+at+8.21.18+AM.png)
+![Image of mimosa in action](static/screenshot_of_final_product.png)
 
 Each week I'll update the code with what's been accomplished so far, so check back for updates!
 
