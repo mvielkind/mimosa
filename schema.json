@@ -75,7 +75,7 @@
         						}
         					],
         					"on_complete": {
-        						"redirect": "<NGROK>/add-to-waitlist"
+        						"redirect": "https://ca99141d219e.ngrok.io/add-to-waitlist"
         					}
         				}
         			}
