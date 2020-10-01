@@ -2,6 +2,8 @@
 
 This is an ongoing project I'm building on my Twitch stream. The inspiration is to provide an open-source, easy to use, system for managing wait lists for businesses.
 
+You can follow along every Tuesday and Thursday AM on my Twitch channel where I livestream adding more features: [Twitch- matty_v_codes](https://www.twitch.tv/matty_v_codes)
+
 The objective of the system is to:
 
 - Allow customers to use SMS to signup, cancel, and get their position on the waitlist.
