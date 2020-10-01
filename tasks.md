@@ -8,9 +8,15 @@
 
 - [] Customers can get their place on the waitlist
 	- [] Need an Autopilot task to get their location on waitlist
+	- [] Get all cards on the Waitlist and determine position on the waitlist
 
 - [] Business can click button to send relevant alerts
 	- [] Your table is ready
 	- [] Reply to confirm your phone number
 
 - [] Business should be able to view all the customer preferences
+- [] Create Twilio Sync map for mapping customer phone numbers to their cards on the board
+- [] Create Custom Fields to capture important customer attributes (especially attributes
+	that could be utilized to send messages.)
+	- [] Name
+	- [] Phone Number

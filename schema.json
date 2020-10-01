@@ -75,7 +75,7 @@
         						}
         					],
         					"on_complete": {
-        						"redirect": "https://ca99141d219e.ngrok.io/add-to-waitlist"
+        						"redirect": "https://950a40f70e51.ngrok.io/add-to-waitlist"
         					}
         				}
         			}
