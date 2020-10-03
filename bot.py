@@ -21,6 +21,14 @@ def add_to_waitlist():
 	# Mask phone number for demo.
 	phone_number = "+15555555"
 
+	# Check if there is a card associated with the phone number already.
+	if trello.get_customer_card_id(phone_number):
+		return {
+			"actions": [
+				{"say": "Looks like you're already on the waitlist!"}
+			]
+		}
+
 	customer_answers = memory["twilio"]["collected_data"]["customer_info"]["answers"]
 
 	customer_name = customer_answers["customer_name"]["answer"]
@@ -34,7 +42,7 @@ def add_to_waitlist():
 	description = "\n".join([description, f"Phone Number: {phone_number}"])
 
 	# Trigger creating a card in Trello.
-	card = trello.create_card_in_waitlist(title, description)
+	card = trello.create_card_in_waitlist(title, description, phone_number)
 	card_id = json.loads(card.text)["id"]
 	print(card_id)
 

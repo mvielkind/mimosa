@@ -1,6 +1,8 @@
 import os
 import json
 import requests
+from twilio.rest import Client
+from twilio.base.exceptions import TwilioRestException
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -11,12 +13,35 @@ TRELLO_BOARD = os.getenv("TRELLO_BOARD_ID")
 TRELLO_WAITLIST_ID = os.getenv("TRELLO_WAITLIST_ID")
 
 TRELLO_FIELDS = {
-	"name": os.getenv("TRELLO_FIELD_NAME"),
-	"phone_number": os.getenv("TRELLO_FIELD_NUMBER")
+	"name": "5f75c09969ea425523bfc858",
+	"phone_number": "5f75c0993f480350c397b27f"
 }
 
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_SYNC_SERVICE = "IS9b10209df6ad4070ab178da3b6b233d5"
+TWILIO_SYNC_MAP = "MPc5a6752fc316499d83e462ccbb056af3"
 
-def create_card_in_waitlist(title, desc):
+
+def get_customer_card_id(phone_number):
+	"""
+	Check the Sync Map to see if there is a Card ID associated with the customer.
+	"""	
+	client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
+	try:
+		card = client.sync \
+			.services(TWILIO_SYNC_SERVICE) \
+			.sync_maps(TWILIO_SYNC_MAP) \
+			.sync_map_items(phone_number) \
+			.fetch()
+
+		return True
+	except TwilioRestException as e:
+		return False
+
+
+def create_card_in_waitlist(title, desc, phone_number):
 	"""
 	Create a new customer card in the waitlist.
 	"""
@@ -35,6 +60,20 @@ def create_card_in_waitlist(title, desc):
 		url,
 		params=query
 	)
+
+	# Create an entry in the Sync Map for the newly created card.
+	card_id = json.loads(response.text)["id"]
+	client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+	card = client.sync \
+		.services(TWILIO_SYNC_SERVICE) \
+		.sync_maps(TWILIO_SYNC_MAP) \
+		.sync_map_items \
+		.create(
+			key=phone_number,
+			data={
+				'card_id': card_id
+			}
+		)
 
 	return response
 
@@ -102,38 +141,3 @@ def add_attachment_to_card(card_id):
 		url,
 		params=query
 	)
-
-
-def create_custom_fields():
-	"""
-	Add custom fields to the board for customer name and phone number.
-
-	Having these custom fields will allow Trello to use these fields in the messages that are sent.
-	"""
-	url = "https://api.trello.com/1/customFields"
-
-	headers = {
-		"Accept": "application/json"
-	}
-
-	base_query = {
-		'key': TRELLO_API_KEY,
-		'token': TRELLO_TOKEN,
-		'idModel': TRELLO_BOARD,
-		'modelType': 'board',
-		'type': 'text',
-		'pos': 1,
-		'display_cardFront': "false"
-	}
-
-	for f in ["name", "phone_number"]:
-		base_query["name"] = f
-
-		response = requests.request(
-			"POST",
-			url,
-			headers=headers,
-			params=base_query
-		)
-
-		print(json.loads(response.text))
