@@ -54,6 +54,56 @@
             "samples" : []
         },
         {
+            "uniqueName": "remove_from_waitlist",
+            "actions": {
+                "actions": [
+                    {
+                        "collect": {
+                            "name": "cancel_waitlist",
+                            "questions": [
+                                {
+                                    "question": "Are you sure you want to remove yourself from the waitlist?",
+                                    "name": "confirm_cancel",
+                                    "type": "Twilio.YES_NO",
+                                    "validate": {
+                                        "on_failure": {
+                                            "messages": [
+                                                {
+                                                    "say": "You must respond Yes or No."
+                                                }
+                                            ],
+                                            "repeat_question": true
+                                        },
+                                        "on_success": {
+                                            "say": "Thank you!"
+                                        },
+                                        "max_attempts": {
+                                            "redirect": "task://collect_fallback",
+                                            "num_attempts": 3
+                                        }
+                                    }
+                                }
+                            ],
+                            "on_complete": {
+                                "redirect": "https://e46d6e2e0738.ngrok.io/remove-from-waitlist"
+                            }
+                        }
+                    }
+                ]
+            },
+            "fields": [],
+            "samples": [
+                {
+                    "language": "en-US",
+                    "taggedText": "cancel"
+                },
+                {
+                    "language": "en-US",
+                    "taggedText": "remove from waitlist"
+                }
+            ]
+        },
+        {
         	"uniqueName": "add_to_waitlist",
         	"actions": {
         		"actions": [
@@ -75,7 +125,7 @@
         						}
         					],
         					"on_complete": {
-        						"redirect": "https://950a40f70e51.ngrok.io/add-to-waitlist"
+        						"redirect": "https://e46d6e2e0738.ngrok.io/add-to-waitlist"
         					}
         				}
         			}

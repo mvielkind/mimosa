@@ -12,6 +12,29 @@ TWILIO_FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER")
 TWILIO_TO_NUMBER = os.getenv("TWILIO_TO_NUMBER")
 
 
+@app.route("/remove-from-waitlist", methods=["POST"])
+def remove_from_waitlist():
+	memory = json.loads(request.values["Memory"])
+	phone_number = memory["twilio"]["sms"]["From"]
+
+	# Mask the phone number for demo.
+	phone_number = "+15555555"
+
+	print(memory["twilio"]["collected_data"])
+
+	# Get the card associated with the phone number.
+
+	# Check if card exists in the waitlist.
+
+	# If yes, move card to the cancellation list.
+
+	return {
+		"actions": [
+			{"say": "You've been removed from the list."}
+		]
+	}
+
+
 
 @app.route("/add-to-waitlist", methods=["POST"])
 def add_to_waitlist():
