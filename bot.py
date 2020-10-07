@@ -12,6 +12,8 @@ TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_TO_NUMBER = os.getenv("TWILIO_TO_NUMBER")
 TWILIO_FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER")
+TWILIO_SYNC_SERVICE = 'IS64c852fe6f8101aacfa6be27bc7823ca'
+TWILIO_SYNC_MAP = 'MP0ccdd2257c7a41e7a3fa39b3f728e850'
 
 
 @app.route("/add-to-waitlist", methods=["POST"])
@@ -20,6 +22,16 @@ def add_to_waitlist():
 	memory = json.loads(request.values["Memory"])
 	phone_number = memory["twilio"]["sms"]["From"]
 	phone_number = "+15555555555"
+
+	# TODO: Perform a check to see if customer is already on the waitlist.
+	if trello.check_if_card_exists(phone_number):
+		return {
+			"actions": [
+				{
+					"say": "Looks like you're already on the waitlist."
+				}
+			]
+		}
 
 	customer_answers = memory["twilio"]["collected_data"]["customer_info"]["answers"]
 
@@ -33,7 +45,7 @@ def add_to_waitlist():
 	desc = "\n".join([desc, f"Phone Number: {phone_number}"])
 
 	# Trigger creating a card in Trello.
-	card = trello.create_card_in_waitlist(title, desc)
+	card = trello.create_card_in_waitlist(title, desc, phone_number)
 	card_id = json.loads(card.text)["id"]
 
 	# Update the custom fields on the card.
@@ -48,6 +60,50 @@ def add_to_waitlist():
 			}
 		]
 	}
+
+
+@app.route("/remove-from-waitlist", methods=["POST"])
+def remove_from_waitlist():
+	memory = json.loads(request.values["Memory"])
+	phone_number = memory["twilio"]["sms"]["From"]
+	phone_number = "+15555555555"
+
+	# Is there a card for the customer?
+	if not trello.check_if_card_exists(phone_number):
+		return {
+			"actions": [
+				{
+					"say": "We can't find you on the wait list. If you would like to be added you can ask me to 'join the waitlist'"
+				}
+			]
+		}
+
+	# Handle Confirm "No" v. "Yes".
+	customer_answers = memory["twilio"]["collected_data"]["waitlist_remove"]["answers"]
+	confirm_answer = customer_answers["confirm"]["answer"]
+
+	if confirm_answer.lower() == "no":
+		return {
+			"actions": [
+				{
+					"say": "Grand! We will see you soon!"
+				}
+			]
+		}
+	else:
+		card = trello.get_trello_card_id(phone_number)
+		card_id = card.data["trello_card_id"]
+		response = trello.update_card_list(card_id, "Cancellations")
+		removed = trello.remove_customer_from_sync_map(phone_number)
+
+	return {
+		"actions": [
+			{
+				"say": "You have been removed from the wait list."
+			}
+		]
+	}
+
 
 
 @app.route("/table-is-ready", methods=["POST"])

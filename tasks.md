@@ -1,11 +1,16 @@
-- [] Customers can add themselves to the waitlist via SMS
-	- [] Build an Autopilot task to capture reservation information
-	- [] Create a card in the Trello waitlist
+- [x] Customers can add themselves to the waitlist via SMS
+	- [x] Build an Autopilot task to capture reservation information
+	- [x] Create a card in the Trello waitlist
 	- [] Check if the customer is on the waitlist already
 
 - [] Customers can remove themselves from the waitlist
 	- [] Need an Autopilot task to be removed from the waitlist
-	- [] Move the card to the Cancellations list
+	- [] Create an endpoint in Flask to handle the customer request
+		- [] Is the customer in the waitlist?
+		- [] Determine where on the board the customer exists.
+		- [] Process confirmations properly
+	- [] Create a function in trello.py to move the card to the Cancellations list
+	- [] Remove the Sync Map entry
 
 - [] Customers can get their place on the waitlist
 	- [] Need an Autopilot task to get their location on waitlist
