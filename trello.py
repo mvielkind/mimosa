@@ -69,6 +69,26 @@ def remove_customer_from_sync_map(phone_number):
 	return sync_map_item
 
 
+def get_cards_in_list(trello_list):
+	"""
+	Return all the cards for a specific Trello list.
+	"""
+	url = f"https://api.trello.com/1/lists/{TRELLO_LISTS[trello_list]}/cards"
+
+	query = {
+	   'key': TRELLO_API_KEY,
+	   'token': TRELLO_TOKEN
+	}
+
+	response = requests.request(
+	   "GET",
+	   url,
+	   params=query
+	)
+
+	return json.loads(response.text)
+
+
 def add_customer_to_sync_map(phone_number, card_id):
 	"""
 	Adds a new customer entry to the Sync Map.
