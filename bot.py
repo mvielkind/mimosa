@@ -16,6 +16,78 @@ TWILIO_SYNC_SERVICE = 'IS64c852fe6f8101aacfa6be27bc7823ca'
 TWILIO_SYNC_MAP = 'MP0ccdd2257c7a41e7a3fa39b3f728e850'
 
 
+@app.route("/confirm-waitlist-join", methods=["POST"])
+def confirm_waitlist_join():
+	"""
+	Confirms if the customer wants to join the waitlist.
+	"""
+	memory = json.loads(request.values["Memory"])
+	confirm = memory["twilio"]["collected_data"]["confirm_waitlist"]["answers"]["confirm"]["answer"]
+
+	if confirm == "Yes":
+		next_action = [
+			{
+				"redirect": "task://add_to_waitlist"
+			}
+		]
+	else:
+		next_action = [
+			{
+				"say": "No problem! You can ask to join the waitlist at any time!"
+			}
+		]
+
+	return {
+		"actions": next_action
+	}
+
+
+
+@app.route("/number-in-line", methods=["POST"])
+def number_in_line():
+	"""
+	Get the number of people currently on the waitlist.
+	"""
+	memory = json.loads(request.values["Memory"])
+	phone_number = memory["twilio"]["sms"]["From"]
+	phone_number = "+15555555555"
+
+	# Get all cards in list.
+	cards = trello.get_cards_in_list("Waitlist")
+
+	# Is the current customer already in line?
+	card = trello.get_trello_card_id(phone_number)
+	# TODO: Handle when customer has a card on board, but not on the waitlist.
+	if card:
+		card_id = card.data["trello_card_id"]
+
+		# Turn this into a function to get place in line.
+		for i, c in enumerate(cards):
+			if card_id == c["id"]:
+				break
+
+		next_action = [
+			{
+				"say": f"There are {str(i)} people in front of you on the wait list."
+			}
+		]
+	else:
+		next_action = [
+			{
+				"say": f"There are {len(cards)} people on the wait list right now."
+			},
+			{
+				"redirect": "task://ask_join_waitlist"
+			}
+		]
+		
+
+
+	return {
+		"actions": next_action
+	}
+
+
 @app.route("/add-to-waitlist", methods=["POST"])
 def add_to_waitlist():
 	# Parse the bot response to get the customer information.
