@@ -1,4 +1,6 @@
 mimosa-env/
+.idea/
+schema.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
