@@ -1,0 +1,167 @@
+{
+  "description": "A New Flow",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "next": "mimosa-bot",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "next": "send_and_reply_1",
+          "event": "incomingRequest"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "mimosa-bot",
+      "type": "send-to-auto-pilot",
+      "transitions": [
+        {
+          "event": "sessionEnded"
+        },
+        {
+          "event": "failure"
+        },
+        {
+          "event": "timeout"
+        }
+      ],
+      "properties": {
+        "chat_channel": "{{trigger.message.ChannelSid}}",
+        "offset": {
+          "x": -270,
+          "y": 200
+        },
+        "autopilot_assistant_sid": "<AUTOPILOT_SID>",
+        "from": "{{flow.channel.address}}",
+        "chat_service": "{{trigger.message.InstanceSid}}",
+        "body": "{{trigger.message.Body}}",
+        "timeout": 14400
+      }
+    },
+    {
+      "name": "send_and_reply_1",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "split_1",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "add_unverified_label",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 260,
+          "y": 160
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "body": "Hi {{flow.data.customer_name}}!  Thanks for joining the wait list. Reply Yes to confirm your phone number.",
+        "timeout": "10"
+      }
+    },
+    {
+      "name": "split_1",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "send_message_2",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to Yes",
+              "arguments": [
+                "{{widgets.send_and_reply_1.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "Yes"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.send_and_reply_1.inbound.Body}}",
+        "offset": {
+          "x": -40,
+          "y": 490
+        }
+      }
+    },
+    {
+      "name": "send_message_2",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 120,
+          "y": 760
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "body": "Thank you! We'll let you know when your table is ready."
+      }
+    },
+    {
+      "name": "add_unverified_label",
+      "type": "make-http-request",
+      "transitions": [
+        {
+          "event": "success"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 490,
+          "y": 420
+        },
+        "method": "POST",
+        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "parameters": [
+          {
+            "value": "{{flow.data.card_id}}",
+            "key": "card_id"
+          }
+        ],
+        "url": "<NGROK_URL>/phone-unverified"
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}
