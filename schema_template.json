@@ -68,7 +68,7 @@
                                 }
                             ],
                             "on_complete": {
-                                "redirect": "https://7551748add4f.ngrok.io/confirm-waitlist-join"
+                                "redirect": "<NGROK_URL>/confirm-waitlist-join"
                             }
                         }
                     }
@@ -82,7 +82,7 @@
             "actions": {
                 "actions": [
                     {
-                        "redirect": "https://7551748add4f.ngrok.io/number-in-line"
+                        "redirect": "<NGROK_URL>/number-in-line"
                     }
                 ]
             },
@@ -121,7 +121,7 @@
         						}
         					],
         					"on_complete": {
-        						"redirect": "https://7551748add4f.ngrok.io/remove-from-waitlist"
+        						"redirect": "<NGROK_URL>/remove-from-waitlist"
         					}
         				}
         			}
@@ -148,6 +148,53 @@
         	]
         },
         {
+        	"uniqueName": "has_preferences",
+        	"actions": {
+        		"actions": [
+        			{
+        				"collect": {
+        					"name": "customer_has_preferences",
+        					"questions": [
+        						{
+        							"question": "Do you have any food allergies or other preferences you would like us to know about?",
+        							"name": "ask_for_preferences",
+        							"type": "Twilio.YES_NO"
+        						}
+        					],
+        					"on_complete": {
+        						"redirect": "<NGROK_URL>/has-preferences"
+        					}
+        				}
+        			}
+        		]
+        	},
+        	"fields": [],
+        	"samples": []
+        },
+        {
+        	"uniqueName": "get_preferences",
+        	"actions": {
+        		"actions": [
+        			{
+        				"collect": {
+        					"name": "collect_preferences",
+        					"questions": [
+        						{
+        							"question": "What would you like us to know about so that we can accommodate your needs?",
+        							"name": "customer_preferences"
+        						}
+        					],
+        					"on_complete": {
+        						"redirect": "<NGROK_URL>/process-preferences"
+        					}
+        				}
+        			}
+        		]
+        	},
+        	"fields": [],
+        	"samples": []
+        },
+        {
         	"uniqueName": "add_to_waitlist",
         	"actions": {
         		"actions": [
@@ -162,14 +209,10 @@
         						{
         							"question": "How many people are in your party?",
         							"name": "party_size"
-        						},
-        						{
-        							"question": "Do you have any specific needs or preferences?",
-        							"name": "preferences"
         						}
         					],
         					"on_complete": {
-        						"redirect": "https://7551748add4f.ngrok.io/add-to-waitlist"
+        						"redirect": "<NGROK_URL>/add-to-waitlist"
         					}
         				}
         			}
@@ -188,6 +231,10 @@
         		{
         			"language": "en-US",
         			"taggedText": "I want to be on the waitlist"
+        		},
+        		{
+        			"language": "en-US",
+        			"taggedText": "Join the waitlist"
         		}
         	]
         },
@@ -209,7 +256,7 @@
             "actions" : {
                 "actions" : [
                     {
-                        "say" : "Thank you! Please reach out again if you need anything. Goodbye."
+                        "say" : "This is not the right response."
                     }
                 ]
             },
@@ -290,7 +337,7 @@
             "actions" : {
                 "actions" : [
                     {
-                        "say" : "Hello, what can I help you with today?"
+                        "say" : "Howdy! I'm Mimosa! I can help you manage your reservation today. You can ask me things like:\n\nJoin the waitlist\nHow long is the wait\nCancel my reservation\n\nWhat can I help you with today?"
                     },
                     { "listen" : true }
                 ]
