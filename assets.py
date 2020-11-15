@@ -2,6 +2,7 @@ import os
 import click
 import requests
 import json
+import trello
 from twilio.rest import Client
 import dotenv
 dotenv.load_dotenv()
@@ -15,8 +16,6 @@ TWILIO_AUTOPILOT_SID = os.getenv("TWILIO_AUTOPILOT_SID")
 TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
 TRELLO_TOKEN = os.getenv("TRELLO_TOKEN")
 
-NGROK_URL = os.getenv("NGROK_URL")
-
 
 @click.group()
 def cli():
@@ -25,14 +24,19 @@ def cli():
 
 @cli.command()
 @click.argument("board_name")
-def deploy(board_name):
+@click.argument("ngrok_url")
+def deploy(board_name, ngrok_url):
 	"""
 	Create all of the Trello board assets.
 	"""
 	# Create Trello Board.
-	board = create_trello_board(board_name)
-	board_id = board["id"]
+	#board = create_trello_board(board_name)
+	#board_id = board["id"]
+	board_id = "5fae7fe5a4f4854d4898883f"
 	dotenv.set_key(".env", "TRELLO_BOARD_ID", board_id)
+
+	# Enable Custom Fields Power-Up.
+	powerup = enable_board_powerup(board_id, "56d5e249a98895a9797bebb9")
 
 	# Create Trello lists.
 	trello_lists = ["No Show", "Cancellations", "Completed", "Table is Ready", "Waitlist"]
@@ -54,8 +58,11 @@ def deploy(board_name):
 	for field in trello_fields:
 		create_custom_fields(field, board_id)
 
+	# Setup the Twilio Sync Service.
+	sync_service, sync_map = create_sync_services()
+
 	# Create the Twilio Studio Flow.
-	flow = create_studio_flow()
+	flow = create_studio_flow(ngrok_url)
 
 	# Add flow to the our phone number.
 	phone = update_phone_incoming_webhook(flow.webhook_url)
@@ -78,7 +85,7 @@ def update_autopilot_endpoints(ngrok_url):
 	json.dump(new_schema, open("schema.json", "w"))
 
 
-def create_studio_flow():
+def create_studio_flow(ngrok_url):
 	"""
 	Reads the flow_template.json file and makes replacements in the template for the proper Autopilot SID
 	and the NGROK URL being used.
@@ -89,7 +96,7 @@ def create_studio_flow():
 	# Read and make replacements.
 	flow_def = json.dumps(json.load(open("flow_template.json", "r"))).\
 		replace("<AUTOPILOT_SID>", TWILIO_AUTOPILOT_SID).\
-		replace("<NGROK_URL>", NGROK_URL)
+		replace("<NGROK_URL>", ngrok_url)
 
 	# Convert to a dictionary representation.
 	flow_def = json.loads(flow_def)
@@ -111,6 +118,7 @@ def create_studio_flow():
 		# Update the existing Studio Flow.
 		flow = client.studio.flows(flow_sid).update(
 			commit_message='Push flow update.',
+			status='published',
 			definition=flow_def
 		)
 
@@ -173,6 +181,24 @@ def create_trello_board(board_name):
 	return json.loads(response.text)
 
 
+def enable_board_powerup(board_id, plugin_id):
+	url = f"https://api.trello.com/1/boards/{board_id}/boardPlugins"
+
+	query = {
+		'key': TRELLO_API_KEY,
+		'token': TRELLO_TOKEN,
+		'idPlugin': plugin_id
+	}
+
+	response = requests.request(
+		"POST",
+		url,
+		params=query
+	)
+
+	print(response.text)
+
+
 def create_trello_label(label_name, label_color, board_id):
 	"""
 	Create a Trello label for the board.
@@ -197,22 +223,27 @@ def create_trello_label(label_name, label_color, board_id):
 
 
 def create_trello_list(list_name, board_id):
-	url = "https://api.trello.com/1/lists"
+	# Check if list exists.
+	list_id = trello.get_list_id(list_name)
+	if list_id:
+		print(f"List {list_name} already exists")
+	else:
+		url = "https://api.trello.com/1/lists"
 
-	query = {
-		'key': TRELLO_API_KEY,
-		'token': TRELLO_TOKEN,
-		'name': list_name,
-		'idBoard': board_id
-	}
+		query = {
+			'key': TRELLO_API_KEY,
+			'token': TRELLO_TOKEN,
+			'name': list_name,
+			'idBoard': board_id
+		}
 
-	response = requests.request(
-		"POST",
-		url,
-		params=query
-	)
+		response = requests.request(
+			"POST",
+			url,
+			params=query
+		)
 
-	print(response.text)
+		print(response.text)
 
 
 def create_custom_fields(field_name, board_id):
