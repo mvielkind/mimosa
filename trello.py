@@ -9,38 +9,22 @@ load_dotenv()
 
 TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
 TRELLO_TOKEN = os.getenv("TRELLO_TOKEN")
-TRELLO_BOARD = "5f7312a009963d58f67798cd"
-TRELLO_WAITLIST_ID = "5f731c76dcdc6e64abcd472f"
-TRELLO_LISTS = {
-	"Waitlist": "5f731c76dcdc6e64abcd472f",
-	"Cancellations": "5f731cbcfeff7640ed977775",
-	"No Show": "5f731c83bb3c235228212c4f"
-}
-TRELLO_FIELDS = {
-	"name": "5f75c09969ea425523bfc858",
-	"phone_number": "5f75c0993f480350c397b27f"
-}
-TRELLO_NUDGE_LABELS = {
-	1: "5f901e37af41b47d964966da",
-	2: "5f901eaba2bffd0ffdc671a2",
-	3: "5f901eb8e8a97923cba5a94c"
-}
-
-TRELLO_LABELS = {
-	"Unverified": "5f7312a0cdabcf46c0e3f57e"
-}
+TRELLO_BOARD = os.getenv("TRELLO_BOARD_ID")
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-TWILIO_SYNC_SERVICE = 'IS64c852fe6f8101aacfa6be27bc7823ca'
-TWILIO_SYNC_MAP = 'MP0ccdd2257c7a41e7a3fa39b3f728e850'
+TWILIO_SYNC_SERVICE = os.getenv("TWILIO_SYNC_SID")
+TWILIO_SYNC_MAP = os.getenv("TWILIO_SYNC_MAP_SID")
 
 
-def get_list_id(list_name):
+def get_list_id(list_name, board_id=None):
 	"""
 	Get the ID of the list name provided.
 	"""
-	url = f"https://api.trello.com/1/boards/{TRELLO_BOARD}/lists"
+	if board_id:
+		url = f"https://api.trello.com/1/boards/{board_id}/lists"
+	else:
+		url = f"https://api.trello.com/1/boards/{TRELLO_BOARD}/lists"
 
 	query = {
 	   'key': TRELLO_API_KEY,
@@ -108,10 +92,6 @@ def get_field_id(field_name):
 			return l["id"]
 
 	return None
-
-
-def get_nudge_label(n_nudge):
-	return TRELLO_NUDGE_LABELS[n_nudge]
 
 
 def add_label_to_card(card_id, label_id):
@@ -246,7 +226,7 @@ def add_customer_to_sync_map(phone_number, card_id):
 			.create(key=phone_number, data={
 				"trello_card_id": card_id
 			})
-	except TwilioRestException:
+	except TwilioRestException as e:
 		sync_map_item = client.sync \
 			.services(TWILIO_SYNC_SERVICE) \
 			.sync_maps(TWILIO_SYNC_MAP) \

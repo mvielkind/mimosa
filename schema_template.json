@@ -137,6 +137,14 @@
         			"language": "en-US",
         			"taggedText": "Remove from waitlist"
         		},
+                {
+                    "language": "en-US",
+                    "taggedText": "Remove me from the wait list"
+                },
+                {
+                    "language": "en-US",
+                    "taggedText": "Remove me from the list"
+                },
         		{
         			"language": "en-US",
         			"taggedText": "Remove"
@@ -144,6 +152,10 @@
         		{
         			"language": "en-US",
         			"taggedText": "Take me off the list"
+        		},
+                {
+        			"language": "en-US",
+        			"taggedText": "Take me off the wait list"
         		}
         	]
         },
@@ -235,7 +247,19 @@
         		{
         			"language": "en-US",
         			"taggedText": "Join the waitlist"
-        		}
+        		},
+                {
+                    "language": "en-US",
+                    "taggedText": "Put me on the wait list"
+                },
+                {
+                    "language": "en-US",
+                    "taggedText": "Add me to the wait list"
+                },
+                {
+                    "language": "en-US",
+                    "taggedText": "Join the wait list"
+                }
         	]
         },
         {

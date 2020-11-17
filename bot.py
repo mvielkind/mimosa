@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-TWILIO_TO_NUMBER = os.getenv("TWILIO_TO_NUMBER")
 TWILIO_FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER")
 TWILIO_SYNC_SERVICE = 'IS64c852fe6f8101aacfa6be27bc7823ca'
 TWILIO_SYNC_MAP = 'MP0ccdd2257c7a41e7a3fa39b3f728e850'
@@ -71,7 +70,6 @@ def number_in_line():
 
 	# Is the current customer already in line?
 	card = trello.get_trello_card_id(phone_number)
-	# TODO: Handle when customer has a card on board, but not on the waitlist.
 	if card:
 		card_id = card.data["trello_card_id"]
 
@@ -258,7 +256,6 @@ def table_reminder():
 
 	customer_name = dat["name"]
 	to_number = dat["phone_number"]
-	to_number = TWILIO_TO_NUMBER
 
 	# Add new status label to card.
 	card = trello.get_trello_card_id(dat["phone_number"])
@@ -309,7 +306,6 @@ def table_is_ready():
 
 	customer_name = dat["name"]
 	to_number = dat["phone_number"]
-	to_number = TWILIO_TO_NUMBER
 
 	# Send text message to customer alterting table is ready.
 	msg = f"Howdy {customer_name}! Your table is ready, make your way back to the restaurant so we can get you seated."
@@ -350,7 +346,6 @@ def confirm_phone():
 	dat = json.loads(request.data)
 	customer_name = dat["name"]
 	to_number = dat["phone_number"]
-	to_number = TWILIO_TO_NUMBER
 	card_id = dat["card_id"]
 
 	# Create the Sync Map entry.

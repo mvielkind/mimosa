@@ -95,8 +95,8 @@
               "arguments": [
                 "{{widgets.send_and_reply_1.inbound.Body}}"
               ],
-              "type": "equal_to",
-              "value": "Yes"
+              "type": "matches_any_of",
+              "value": "Yes, Y, YES, yes, y"
             }
           ]
         }
