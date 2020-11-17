@@ -76,7 +76,7 @@ To setup the app you will:
 
 ### Setup your Environment File
 
-Create a `.env` file in the project directory.  You can use `.env.sample` as a template for what needs to be provided in the `.env` file.
+Create a `.env` file in the project directory.  You can use `.env.sample` as a template for what needs to be provided in the `.env` file. If you are going to save your code with git make sure you add the `.env` to your `.gitignore` file to protect your API keys and tokens!
 
 You will need to provide information about both your Trello and Twilio accounts so that you can access the APIs.
 
@@ -110,7 +110,7 @@ You will see a HTTPS forwarding address. Keep that handy as you'll need that in 
 We're going to use [Twilio Autopilot](https://www.twilio.com/autopilot) to build a bot to process customer messages. Autopilot will interpret customer messages and direct them to the correct task they request.
  
 The project contains a file `schema_template.json` defining the behavior of the Autopilot bot. The JSON file has details about  Throughout the template there are placeholders for the appropriate ngrok address to make sure requests get forwarded to the correct location to be processed. Instead of having to replace these instances with your own ngrok address there is a function in `assets.py` called `update_autopilot_endpoints`
-that will make those replacements and generate a new schema file you can use for deployment. You can call this through a terminal call replaying NGROK_URL with the HTTPS forwarding address of your ngrok server.
+that will make those replacements and generate a new schema file you can use for deployment. You can call this through a terminal call replacing NGROK_URL with the HTTPS forwarding address of your ngrok server.
 
 ```commandline
 python3 assets.py update-autopilot-endpoints NGROK_URL
@@ -269,7 +269,7 @@ Finally enter the following into the payload:
 {"name": "{{%name}}", "phone_number": "{{%phone_number}}", "card_id": "{cardid}"}
 ```
 
-### Startup the Flask Server
+### Start the Flask Server
 
 The last step is to start your Flask server by entering the following in the commandline:
 
