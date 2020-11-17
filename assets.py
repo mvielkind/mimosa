@@ -30,9 +30,8 @@ def deploy(board_name, ngrok_url):
 	Create all of the Trello board assets.
 	"""
 	# Create Trello Board.
-	#board = create_trello_board(board_name)
-	#board_id = board["id"]
-	board_id = "5fae7fe5a4f4854d4898883f"
+	board = create_trello_board(board_name)
+	board_id = board["id"]
 	dotenv.set_key(".env", "TRELLO_BOARD_ID", board_id)
 
 	# Enable Custom Fields Power-Up.
@@ -224,7 +223,7 @@ def create_trello_label(label_name, label_color, board_id):
 
 def create_trello_list(list_name, board_id):
 	# Check if list exists.
-	list_id = trello.get_list_id(list_name)
+	list_id = trello.get_list_id(list_name, board_id)
 	if list_id:
 		print(f"List {list_name} already exists")
 	else:
