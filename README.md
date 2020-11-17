@@ -1,29 +1,30 @@
 # mimosa- Managing a Wait List using Twilio and Trello
 
-This is an ongoing project I'm building on my Twitch stream. The inspiration is to provide an open-source, easy to use, system for managing wait lists for businesses.
+The purpose of this project is to demonstrate how Trello can be integrated with Twilio. The application built here is to help a restaurant manage a wait list for their customers. Using Trello as an interface the restaurant can manage customers on the wait list. The integration with Twilio helps facilitate communications between the restaurant and customers.
+ 
+Together this application:
 
-You can follow along every Tuesday and Thursday AM on my Twitch channel where I livestream adding more features: [Twitch- matty_v_codes](https://www.twitch.tv/matty_v_codes)
+- Allows customers to use SMS to signup, cancel, and get their position on the wait list.
+- Certain card movements prompt automatic messages to be sent to the affected customer.
+- Common messages can be sent to a customer with the click of a button.
+- Messages are personalized to the customer.
+- Can be deploy in a few commandline commands.
 
-The objective of the system is to:
+The rest of the documentation walks through the prerequisites for the application and each of the quick deploy steps. Once you have the prerequisites completed a majority of the app can be deployed in just a few commandline commands.
 
-- Allow customers to use SMS to signup, cancel, and get their position on the waitlist.
-- Businesses can easily manage the waitlist and send relevant updates to the the customer when it's their turn.
-- Make the whole system easy to deploy
+While this app is specific to managing a restaurant wait list there are a number of derivative use cases! If you build something yourself tell me about it! Also, if something isn't clear in the documentation or in some behavior of the application let me know and I can help you work through it.
 
-Here is a screenshot of what the final product could look like using my favorite fish friends from Finding Nemo!
-
-![Image of mimosa in action](static/screenshot_of_final_product.png)
-
-Each week I'll update the code with what's been accomplished so far, so check back for updates!
+A majority of this app was built via live coding on Twitch. I'm a big proponent of building in public. If this application interests you find me on Twitch ([matty_v_codes](https://www.twitch.tv/matty_v_codes)) to follow along on my next project!
 
 ## Prerequisites
 
 Before getting started you will need the following to complete the setup of the app:
 
 - A Twilio account. If you don't have an account already you can sign up with [this link](www.twilio.com/referral/J5x4pK) for a free $10 to get started (more than enough for this app!)
-- A Trello account. You will need to have a Trello Gold account to support some of the functionality we're using here. You can create your Trello account with [here](https://trello.com/matthewvielkind/recommend).
+- A Trello account. You will need to have a Trello Gold account to support some of the functionality we're using here. You can get started creating your Trello account [here](https://trello.com/matthewvielkind/recommend).
 - Download and install the [Twilio CLI](https://www.twilio.com/docs/twilio-cli/quickstart) and [Autopilot Plugin](https://www.twilio.com/docs/autopilot/twilio-autopilot-cli). We'll use this to help deploy some of our Twilio resources. The [Twilio CLI Quickstart](https://www.twilio.com/docs/twilio-cli/quickstart) has fantastic instructions for installing and setting up the CLI. Those instructions are also summarized in the [Setting up the Twilio CLI](#setting-up-the-twilio-cli) section of this documentation.
 - Have [ngrok](https://ngrok.com/) installed.
+- Install the packages in `requirements.txt`.
 
 ## Setting up the Twilio CLI
 
@@ -276,4 +277,6 @@ The last step is to start your Flask server by entering the following in the com
 python3 bot.py
 ```
 
+### Test it Out!
 
+Text your phone number and see what happens! Now that everything is setup you should be able to text your phone number and interact with the application.
