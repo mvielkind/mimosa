@@ -17,11 +17,14 @@ TWILIO_SYNC_SERVICE = os.getenv("TWILIO_SYNC_SID")
 TWILIO_SYNC_MAP = os.getenv("TWILIO_SYNC_MAP_SID")
 
 
-def get_list_id(list_name):
+def get_list_id(list_name, board_id=None):
 	"""
 	Get the ID of the list name provided.
 	"""
-	url = f"https://api.trello.com/1/boards/{TRELLO_BOARD}/lists"
+	if board_id:
+		url = f"https://api.trello.com/1/boards/{board_id}/lists"
+	else:
+		url = f"https://api.trello.com/1/boards/{TRELLO_BOARD}/lists"
 
 	query = {
 	   'key': TRELLO_API_KEY,
