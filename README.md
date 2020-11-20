@@ -1,5 +1,7 @@
 # mimosa- Managing a Wait List using Twilio and Trello
 
+![mimosa logo](static/mimosa_logo_redesign.png)
+
 The purpose of this project is to demonstrate how Trello can be integrated with Twilio. The application built here is to help a restaurant manage a wait list for their customers. Using Trello as an interface the restaurant can manage customers on the wait list. The integration with Twilio helps facilitate communications between the restaurant and customers.
  
 Together this application:
